@@ -22,6 +22,7 @@ public class NotificationListener {
 
     @JmsListener(destination = "${destination.notify}")
     public void sendNotification(Message message) throws JMSException {
+        System.out.println("NOTIFICATION RECEIVED!!!!!!!!!");
         RegistrationNotificationDto registrationNotificationDto = messageHelper.getMessage(message, RegistrationNotificationDto.class);
         notificationService.sendRegistrationEmail(registrationNotificationDto);
     }

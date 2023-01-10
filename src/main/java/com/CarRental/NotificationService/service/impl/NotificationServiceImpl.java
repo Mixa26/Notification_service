@@ -33,6 +33,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void sendRegistrationEmail(RegistrationNotificationDto registrationNotificationDto) {
+        System.out.println("ENTERED");
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("mmadzarevic5520rn@raf.rs");
         message.setTo(registrationNotificationDto.getEmail());
@@ -45,5 +46,6 @@ public class NotificationServiceImpl implements NotificationService {
         message.setSubject("You have successfully registered for Car Rental.");
 
         javaMailSender.send(message);
+        System.out.printf(String.format("EMAIL SENT! to %s", registrationNotificationDto.getEmail()));
     }
 }
