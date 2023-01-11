@@ -1,8 +1,10 @@
 package com.CarRental.NotificationService.listener;
 
+import com.CarRental.NotificationService.dto.notifications.PasswordChangeNotificationDto;
 import com.CarRental.NotificationService.dto.notifications.RegistrationNotificationDto;
 import com.CarRental.NotificationService.helper.MessageHelper;
 import com.CarRental.NotificationService.service.NotificationService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +24,12 @@ public class NotificationListener {
 
     @JmsListener(destination = "${destination.notify}")
     public void sendNotification(Message message) throws JMSException {
-        System.out.println("NOTIFICATION RECEIVED!!!!!!!!!");
         RegistrationNotificationDto registrationNotificationDto = messageHelper.getMessage(message, RegistrationNotificationDto.class);
         notificationService.sendRegistrationEmail(registrationNotificationDto);
+    }
+    @JmsListener(destination = "${destination.passwordChangeNotify}")
+    public void sendPasswordChangeNotification(Message message) throws JMSException {
+        PasswordChangeNotificationDto passwordChangeNotificationDto = messageHelper.getMessage(message, PasswordChangeNotificationDto.class);
+        notificationService.sendPasswordChangeEmail(passwordChangeNotificationDto);
     }
 }
