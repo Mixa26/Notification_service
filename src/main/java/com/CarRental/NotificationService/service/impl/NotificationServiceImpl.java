@@ -4,8 +4,10 @@ import com.CarRental.NotificationService.domain.Notification;
 import com.CarRental.NotificationService.domain.NotificationHistory;
 import com.CarRental.NotificationService.dto.CreateNotificationDto;
 import com.CarRental.NotificationService.dto.NotificationDto;
+import com.CarRental.NotificationService.dto.notifications.CancEmailDto;
 import com.CarRental.NotificationService.dto.notifications.PasswordChangeNotificationDto;
 import com.CarRental.NotificationService.dto.notifications.RegistrationNotificationDto;
+import com.CarRental.NotificationService.dto.notifications.ResEmailDto;
 import com.CarRental.NotificationService.exceptions.NotFoundException;
 import com.CarRental.NotificationService.mapper.NotificationMapper;
 import com.CarRental.NotificationService.repository.NotificationHistoryRepository;
@@ -100,6 +102,66 @@ public class NotificationServiceImpl implements NotificationService {
         notificationHistoryEntry.setFromEmail("mmadzarevic5520rn@raf.rs");
         notificationHistoryEntry.setUserId(passwordChangeNotificationDto.getId());
         notificationHistoryEntry.setNotificationType(NotificationType.PASSWORD_CHANGE_NOTIFICATION.getValue());
+        notificationHistoryEntry.setDateTime(LocalDateTime.now());
+        notificationHistoryEntry.setSubject(subject);
+        notificationHistoryEntry.setMessage(messageText);
+
+        notificationHistoryRepository.save(notificationHistoryEntry);
+    }
+
+    @Override
+    public void sendResEmailDto(ResEmailDto resEmailDto) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("mmadzarevic5520rn@raf.rs");
+        message.setTo(resEmailDto.getEmail());
+
+        String[] unformattedEmail = getNotificationText(NotificationType.RESERVATION_NOTIFICATION);
+        String subject = unformattedEmail[0];
+        String unformattedMessage = unformattedEmail[1];
+
+        String messageText = String.format(unformattedMessage, resEmailDto.getResId());
+
+        message.setText(messageText);
+        //"Activate your account."
+        message.setSubject(subject);
+
+        javaMailSender.send(message);
+
+        NotificationHistory notificationHistoryEntry = new NotificationHistory();
+        notificationHistoryEntry.setToEmail(resEmailDto.getEmail());
+        notificationHistoryEntry.setFromEmail("mmadzarevic5520rn@raf.rs");
+        notificationHistoryEntry.setUserId(resEmailDto.getClientId());
+        notificationHistoryEntry.setNotificationType(NotificationType.RESERVATION_NOTIFICATION.getValue());
+        notificationHistoryEntry.setDateTime(LocalDateTime.now());
+        notificationHistoryEntry.setSubject(subject);
+        notificationHistoryEntry.setMessage(messageText);
+
+        notificationHistoryRepository.save(notificationHistoryEntry);
+    }
+
+    @Override
+    public void sendCancResEmailDto(CancEmailDto cancEmailDto) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("mmadzarevic5520rn@raf.rs");
+        message.setTo(cancEmailDto.getEmail());
+
+        String[] unformattedEmail = getNotificationText(NotificationType.CANCEL_RESERVATION_NOTIFICATION);
+        String subject = unformattedEmail[0];
+        String unformattedMessage = unformattedEmail[1];
+
+        String messageText = String.format(unformattedMessage, cancEmailDto.getResId());
+
+        message.setText(messageText);
+        //"Activate your account."
+        message.setSubject(subject);
+
+        javaMailSender.send(message);
+
+        NotificationHistory notificationHistoryEntry = new NotificationHistory();
+        notificationHistoryEntry.setToEmail(cancEmailDto.getEmail());
+        notificationHistoryEntry.setFromEmail("mmadzarevic5520rn@raf.rs");
+        notificationHistoryEntry.setUserId(cancEmailDto.getClientId());
+        notificationHistoryEntry.setNotificationType(NotificationType.CANCEL_RESERVATION_NOTIFICATION.getValue());
         notificationHistoryEntry.setDateTime(LocalDateTime.now());
         notificationHistoryEntry.setSubject(subject);
         notificationHistoryEntry.setMessage(messageText);

@@ -1,6 +1,8 @@
 package com.CarRental.NotificationService.listener;
 
+import com.CarRental.NotificationService.dto.notifications.CancEmailDto;
 import com.CarRental.NotificationService.dto.notifications.PasswordChangeNotificationDto;
+import com.CarRental.NotificationService.dto.notifications.ResEmailDto;
 import com.CarRental.NotificationService.dto.notifications.RegistrationNotificationDto;
 import com.CarRental.NotificationService.helper.MessageHelper;
 import com.CarRental.NotificationService.service.NotificationService;
@@ -31,5 +33,17 @@ public class NotificationListener {
     public void sendPasswordChangeNotification(Message message) throws JMSException {
         PasswordChangeNotificationDto passwordChangeNotificationDto = messageHelper.getMessage(message, PasswordChangeNotificationDto.class);
         notificationService.sendPasswordChangeEmail(passwordChangeNotificationDto);
+    }
+
+    @JmsListener(destination = "${destination.notify_reservation}")
+    public void sendReservationNotification(Message message) throws JMSException {
+        ResEmailDto resEmailDto = messageHelper.getMessage(message, ResEmailDto.class);
+        notificationService.sendResEmailDto(resEmailDto);
+    }
+
+    @JmsListener(destination = "${destination.notify_cancelRes}")
+    public void sendCancelReservationNotification(Message message) throws JMSException {
+        CancEmailDto cancEmailDto = messageHelper.getMessage(message, CancEmailDto.class);
+        notificationService.sendCancResEmailDto(cancEmailDto);
     }
 }
